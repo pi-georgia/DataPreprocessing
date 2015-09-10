@@ -12,9 +12,10 @@ The **goal** is to preprocess the data located in various files and folders and 
 The original data was obtained on the following site where the full descriptions can also be found
 http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones 
 https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip 
-#Acknowledgements
-#Dataset used is by [1] Davide Anguita, Alessandro Ghio, Luca Oneto, Xavier Parra and Jorge L. Reyes-Ortiz. Human Activity Recognition on Smartphones using a Multiclass Hardware-Friendly Support Vector Machine. 
-#International Workshop of Ambient Assisted Living (IWAAL 2012). Vitoria-Gasteiz, Spain. Dec 2012
+
+**Acknowledgements**
+Dataset used is by [1] Davide Anguita, Alessandro Ghio, Luca Oneto, Xavier Parra and Jorge L. Reyes-Ortiz. Human Activity Recognition on Smartphones using a Multiclass Hardware-Friendly Support Vector Machine. 
+International Workshop of Ambient Assisted Living (IWAAL 2012). Vitoria-Gasteiz, Spain. Dec 2012
 
 
 # Process
@@ -29,7 +30,7 @@ The operations performed on the data follow the following series of actions :
 
  1. Merge of the training and the test sets to create one data set.    
 
-**READ** 
+**READ**  
 Data is read from the various sources.
     1.1 Get the names of the activities that correspond to classes by reading 'activity_labels.txt': Links the class labels with their activity name.
     1.2 Reading 'train/X_train.txt': Training set. Same for test set
@@ -44,7 +45,7 @@ Data is read from the various sources.
  subjecttrain<- fread("./UCI HAR Dataset/train/subject_train.txt") ;subjecttest<- fread("./UCI HAR Dataset/test/subject_test.txt")
 ```
 
-**MERGE** 
+**MERGE**   
  
  Start the merge in phases : First merge Subject info with Activity Class and Description for train sample, then for test sample, assumming they are ordered to match. No common key to join them on, other than their as-is index.
  
@@ -86,7 +87,9 @@ library(dplyr)
 4. Appropriately labels the data set with descriptive variable names. 
 
 This is a step later required, yet it will enable the process by being implemented at this phase
-**RENAME & FILTER WITH REGEX**
+
+**RENAME & FILTER WITH REGEX**  
+
 ```{r3 echo=FALSE }
 #Get the measurements names by reading the 'features.txt': List of all features.
 feature_names <-fread("./UCI HAR Dataset/features.txt")
@@ -99,7 +102,7 @@ index<-grep("[Mm]ean|std", names(dataset))
 sub_set<-dataset[,index] ; sub_set$ID <- dataset$ID; sub_set$class <- dataset$class; sub_set$subject <- dataset$subject
 ```
             
-3. Use descriptive activity names to name the activities in the data set 
+3. Use descriptive activity names to name the activities in the data set   
   I already have the activity classes in my dataset. All I have to do is match them with their description using a join.
 
 ```{r4 echo=FALSE }
@@ -112,8 +115,9 @@ dsc_dataset<-left_join(dataset,activity_labels)
 dsc_subset<-left_join(sub_set,activity_labels)
 ```
 
-5. From the data set in step 4, create a second, independent tidy data set with the average of each variable for each activity and each subject. 
-This is a process that can be operated using the dplyr package and more specifically group_by and summarize by mean. To make this work I am making some interim clean-ups, new variables and then re-trasnforming my data to ge them in a **tidy** status. While in the original experiment each measurement was represented by a vector containing all possible measurement types, I have chosen to build my tidy data with 4 columns :
+5. From the data set in step 4, create a second, independent tidy data set with the average of each variable for each activity and each subject.   
+
+This is a process that can be operated using the dplyr package and more specifically group_by and summarize by mean. To make this work I am making some interim clean-ups, new variables and then re-trasnforming my data to ge them in a **tidy** status. While in the original experiment each measurement was represented by a vector containing all possible measurement types, I have chosen to build my tidy data with 4 columns :  
  1. Subject #
  2. Activity performed
  3. Measurement Category 
