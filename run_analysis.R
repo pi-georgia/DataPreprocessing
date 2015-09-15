@@ -10,10 +10,6 @@
 #International Workshop of Ambient Assisted Living (IWAAL 2012). Vitoria-Gasteiz, Spain. Dec 2012
 
 
-# 1. Merges the training and the test sets to create one data set.  
-# read data
-#- 'features_info.txt': Shows information about the variables used on the feature vector.
-
 
 # Get the names of the activities that correspond to classes by reading 'activity_labels.txt': Links the class labels with their activity name.
 activity_labels<- fread("./UCI HAR Dataset/activity_labels.txt")
@@ -52,8 +48,7 @@ library(dplyr)
 
  #merge all based on their commony key = ID (automatically selected by join_all)
  library(plyr)
- train <- join_all(trainlist)
- test <- join_all(testlist)
+ train <- join_all(trainlist) ; test <- join_all(testlist)
  
  #Create a universal index across test and train : move index for table "test" by the size of table "train"
  test$ID<- test$ID+length(train[,1])
@@ -62,16 +57,12 @@ library(dplyr)
  dataset<- train
  dataset[length(train[,1]) :(length(train[,1])+ length(test[,1])) , ]<- test
  
- #validate that everything went as planned by comparing before after sizes
+#Validate that everything went as planned by comparing before after sizes
  if( length(dataset[,1]) == (length(train[,1])+ length(test[,1]))) print("ok")
 
- 
- 
- # 2. Extracts only the measurements on the mean and standard deviation for each measurement.   
 #Get the measurements names by reading the 'features.txt': List of all features.
 feature_names <-fread("./UCI HAR Dataset/features.txt")
-
-# 4. Appropriately labels the data set with descriptive variable names. 
+ 
 #rename my dataset features with their names as mentioned in the features.txt
 names(dataset)[1:561] <-feature_names$V2
 
@@ -81,21 +72,13 @@ index<-grep("[Mm]ean|std", names(dataset))
 sub_set<-dataset[,index] ; sub_set$ID <- dataset$ID; sub_set$class <- dataset$class; sub_set$subject <- dataset$subject
 
             
-# 3. Uses descriptive activity names to name the activities in the data set 
-
-# Get the names of the activities that correspond to classes by reading 'activity_labels.txt': Links the class labels with their activity name.
+# Get the descriptive names of the activities that correspond to classes by reading 'activity_labels.txt': Links the class labels with their activity name.
 activity_labels<- fread("./UCI HAR Dataset/activity_labels.txt")
 names(activity_labels)<-c("class", "activity_description")
 
 #Well I have 2 data sets so I will merge them both with the activity_labels
 dsc_dataset<-left_join(dataset,activity_labels)
 dsc_subset<-left_join(sub_set,activity_labels)
-
-# 4. Appropriately labels the data set with descriptive variable names. 
-# completed in step 2
-
-# 5. From the data set in step 4, creates a second, independent tidy data set
-# with the average of each variable for each activity and each subject. 
 
 
 #Create a new key that identifies Activity per Subject
